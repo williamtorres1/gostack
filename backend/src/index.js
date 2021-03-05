@@ -1,11 +1,37 @@
 const express = require('express');
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuid, validate: isUuid } = require('uuid');
 
 const app = express();
 
 app.use(express.json());
 
 const projects = [];
+
+function logRequests(request, response, next) {
+  const { method, url } = request
+
+  const logLabel = `[${method.toUpperCase()} ${url}]`
+
+  console.time(logLabel)
+
+  next()
+
+  console.timeEnd(logLabel)
+}
+
+function validateProjectId(request, response, next) {
+  const { id } = request.params
+
+  if(!isUuid(id)) {
+    return response.status(400).json({ error: 'Invalid project Id.' })
+  }
+
+  next()
+
+}
+
+app.use(logRequests)
+app.use('/projects/:id', validateProjectId)
 
 app.get('/projects', (request, response) => {
   const { title } = request.query;
@@ -20,7 +46,7 @@ app.get('/projects', (request, response) => {
 app.post('/projects', (request, response) => {
   const {title, owner} = request.body
 
-  const project = {id: uuidv4(), title, owner}
+  const project = {id: uuid(), title, owner}
 
   projects.push(project)
 
@@ -56,8 +82,6 @@ app.delete('/projects/:id', (request, response) => {
     return response.status(400).json({ error: 'Project not found'})
   }
 
-  // splice = método para remover informação do array
-  // splice(índice a ser removido, quantas posições remover a partir deste índice)
   projects.splice(projectIndex, 1)
 
   return response.status(204).send();
