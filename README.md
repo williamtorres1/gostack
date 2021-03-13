@@ -1,4 +1,4 @@
-# GoStack
+# Bootcamp GoStack
 
 Repositório para anotações e códigos exemplos do bootcamp 11
 
