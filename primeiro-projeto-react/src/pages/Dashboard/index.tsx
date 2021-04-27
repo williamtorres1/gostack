@@ -1,8 +1,9 @@
 import React from 'react';
+import { Title } from './styles';
 
 const Dashboard: React.FC = () => (
   <div>
-    <h1>Hello GoStack from Dashboard</h1>
+    <Title>Explore repositórios no Github</Title>
   </div>
 );
 
